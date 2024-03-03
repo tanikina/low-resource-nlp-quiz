@@ -1,0 +1,302 @@
+<!--The following quiz template is based on: https://github.com/nickwing04/JSSchoolGames/tree/master/quiz%20game-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz</title>
+<style>
+body {
+    font-size: 20px;
+    font-family: monospace;
+    background-color: #fad2ad;
+}
+
+#container {
+    margin : 20px auto;
+    background-color: white;
+    height: 600px;
+    width : 900px;
+    border-radius: 5px;
+    box-shadow: 0px 5px 15px 0px;
+    position: relative;
+}
+#start {
+    font-size: 1.5em;
+    font-weight: bolder;
+    word-break: break-all;
+    width:100px;
+    height:100px;
+    border : 2px solid grey;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    left:400px;
+    top:250px;
+    color : grey;
+}
+#start:hover {
+    border: 3px solid #f39e4f;
+    color : #f39e4f;
+}
+
+#qImg {
+    width : 500px;
+    height : 220px;
+    position: absolute;
+    left : 0px;
+    top : 0px;
+}
+#qImg img {
+    width : 300px;
+    height : 132px;
+    border-top-left-radius: 5px;
+}
+
+#question {
+    width:880px;
+    height : 125px;
+    position: absolute;
+    right:0;
+    left:10px;
+    top:150px;
+}
+#question p {
+    margin : 0;
+    padding : 15px;
+    font-size: 1.25em;
+}
+
+#choices {
+    width : 580px;
+    position: absolute;
+    right : 120px;
+    top : 350px;
+    padding : 10px;
+}
+.choice {
+    display: inline-block;
+    width : 235px;
+    text-align: center;
+    border : 1px solid grey;
+    border-radius: 10px;
+    cursor: pointer;
+    padding : 5px;
+}
+.choice:hover {
+    border : 2px solid grey;
+    font-weight: bold;
+}
+
+#timer {
+    position: absolute;
+    height : 100px;
+    width : 200px;
+    bottom : 0px;
+    text-align: center;
+}
+#counter {
+    font-size: 3em;
+}
+#progress {
+    width : 500px;
+    position: absolute;
+    bottom : 0px;
+    right : 0px;
+    padding:5px;
+    text-align: right;
+}
+.prog {
+    width : 25px;
+    height : 25px;
+    border: 1px solid #000;
+    display: inline-block;
+    border-radius: 50%;
+    margin-left : 5px;
+    margin-right : 5px;
+}
+#scoreContainer {
+    margin : 20px auto;
+    background-color: white;
+    height: 300px;
+    width : 700px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    box-shadow: 0px 5px 15px 0px;
+    position: relative;
+    display: none;
+    padding: 80px 2em;
+}
+#scoreContainer img {
+    display: block;
+    margin: auto;
+}
+#scoreContainer p {
+    display: block;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+    <div id="container">
+        <div id="start">Start Quiz!</div>
+        <div id="quiz" style="display: none">
+            <div id="question"></div>
+            <div id="qImg"></div>
+            <div id="choices">
+                <div class="choice" id="A" onclick="checkAnswer('A')" style="margin-bottom: 30px;"></div>
+                <div class="choice" id="B" onclick="checkAnswer('B')" style="margin-bottom: 30px;"></div>
+                <div class="choice" id="C" onclick="checkAnswer('C')" style="margin-bottom: 30px;"></div>
+                <div class="choice" id="D" onclick="checkAnswer('D')" style="margin-bottom: 30px;"></div>
+            </div>
+            <div id="progress"></div>
+        </div>
+        <div id="scoreContainer" style="display: none"></div>
+    </div>
+    <script>
+
+// select all elements
+const start = document.getElementById("start");
+const quiz = document.getElementById("quiz");
+const question = document.getElementById("question");
+const qImg = document.getElementById("qImg");
+const choiceA = document.getElementById("A");
+const choiceB = document.getElementById("B");
+const choiceC = document.getElementById("C");
+const choiceD = document.getElementById("D");
+const counter = document.getElementById("counter");
+const progress = document.getElementById("progress");
+const scoreDiv = document.getElementById("scoreContainer");
+
+// create our questions
+let questions = [
+    {
+        question : "Q3?",
+        imgSrc : "img/lt-bridge.png",
+        choiceA : "A)",
+        choiceB : "B)",
+        choiceC : "C)",
+        choiceD : "D)",
+        correct : "A"
+
+    }, {
+        question : "Q2?",
+        imgSrc : "img/lt-bridge.png",
+        choiceA : "A)",
+        choiceB : "B)",
+        choiceC : "C)",
+        choiceD : "D)",
+        correct : "B"
+    }, {
+        question : "Q3?",
+        imgSrc : "img/lt-bridge.png",
+        choiceA : "A)",
+        choiceB : "B)",
+        choiceC : "C)",
+        choiceD : "D)",
+        correct : "A"
+      }
+];
+
+// create some variables
+
+const lastQuestion = questions.length - 1;
+let runningQuestion = 0;
+let count = 0;
+let score = 0;
+
+// render a question
+function renderQuestion() {
+    let q = questions[runningQuestion];
+
+    question.innerHTML = "<p>"+ q.question +"</p>";
+    qImg.innerHTML = "<img src="+ q.imgSrc +">";
+    choiceA.innerHTML = q.choiceA;
+    choiceB.innerHTML = q.choiceB;
+    choiceC.innerHTML = q.choiceC;
+    choiceD.innerHTML = q.choiceD;
+}
+
+start.addEventListener("click",startQuiz);
+
+// start quiz
+function startQuiz() {
+    start.style.display = "none";
+    renderQuestion();
+    quiz.style.display = "block";
+    renderProgress();
+}
+
+// render progress
+function renderProgress() {
+    for(let qIndex = 0; qIndex <= lastQuestion; qIndex++) {
+        progress.innerHTML += "<div class='prog' id="+ qIndex +"></div>";
+    }
+}
+
+// checkAnwer
+function checkAnswer(answer) {
+    if( answer == questions[runningQuestion].correct) {
+        // answer is correct
+        score++;
+        // change progress color to green
+        answerIsCorrect();
+    }else {
+        // answer is wrong
+        // change progress color to red
+        answerIsWrong();
+    }
+    count = 0;
+    if(runningQuestion < lastQuestion) {
+        runningQuestion++;
+        renderQuestion();
+    }else {
+        scoreRender();
+    }
+}
+
+// answer is correct
+function answerIsCorrect() {
+    document.getElementById(runningQuestion).style.backgroundColor = "#2e8b57";
+}
+
+// answer is Wrong
+function answerIsWrong() {
+    document.getElementById(runningQuestion).style.backgroundColor = "#ff6347";
+}
+
+// score render
+function scoreRender() {
+    scoreDiv.style.display = "block";
+
+    // calculate the amount of question percent answered by the user
+    const scorePerCent = Math.round(100 * score/questions.length);
+
+    // choose the image based on the scorePerCent
+    let img = (scorePerCent >= 80) ? "img/5.png" :
+              (scorePerCent >= 60) ? "img/4.png" :
+              (scorePerCent >= 40) ? "img/3.png" :
+              (scorePerCent >= 20) ? "img/2.png" :
+              "img/1.png";
+
+    let finalText = (scorePerCent >= 80) ? "Well done, congratulations!" :
+                    (scorePerCent >= 60) ? "Good job!" :
+                    (scorePerCent >= 40) ? "Not bad." :
+                    (scorePerCent >= 20) ? "This could be better." :
+                    "Please, try again.";
+
+    scoreDiv.innerHTML = "<img src="+ img +">";
+    scoreDiv.innerHTML += "<p>"+ scorePerCent +"%</p>";
+    scoreDiv.innerHTML += "<p>"+ finalText +"</p>";
+    scoreDiv.addEventListener("click", restartQuiz);
+
+}
+
+function restartQuiz(event)
+{
+    document.location.reload();
+}
+    </script>
+</body>
+</html>
