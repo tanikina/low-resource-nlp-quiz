@@ -1,302 +1,194 @@
-<!--The following quiz template is based on: https://github.com/nickwing04/JSSchoolGames/tree/master/quiz%20game-->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Quiz</title>
-<style>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Quiz Time!</title>
+    <style>
 body {
-    font-size: 20px;
-    font-family: monospace;
-    background-color: #fad2ad;
+    background:#fad2ad;
+    color:black;
+    font-family:sans-serif;
 }
-
-#container {
-    margin : 20px auto;
+.question {
     background-color: white;
-    height: 600px;
-    width : 900px;
-    border-radius: 5px;
-    box-shadow: 0px 5px 15px 0px;
-    position: relative;
-}
-#start {
-    font-size: 1.5em;
-    font-weight: bolder;
-    word-break: break-all;
-    width:100px;
-    height:100px;
-    border : 2px solid grey;
-    text-align: center;
-    cursor: pointer;
-    position: absolute;
-    left:400px;
-    top:250px;
-    color : grey;
-}
-#start:hover {
-    border: 3px solid #f39e4f;
-    color : #f39e4f;
-}
-
-#qImg {
-    width : 500px;
-    height : 220px;
-    position: absolute;
-    left : 0px;
-    top : 0px;
-}
-#qImg img {
-    width : 300px;
-    height : 132px;
-    border-top-left-radius: 5px;
-}
-
-#question {
-    width:880px;
-    height : 125px;
-    position: absolute;
-    right:0;
-    left:10px;
-    top:150px;
-}
-#question p {
-    margin : 0;
-    padding : 15px;
-    font-size: 1.25em;
-}
-
-#choices {
-    width : 580px;
-    position: absolute;
-    right : 120px;
-    top : 350px;
-    padding : 10px;
-}
-.choice {
-    display: inline-block;
-    width : 235px;
-    text-align: center;
-    border : 1px solid grey;
-    border-radius: 10px;
-    cursor: pointer;
-    padding : 5px;
-}
-.choice:hover {
-    border : 2px solid grey;
-    font-weight: bold;
-}
-
-#timer {
-    position: absolute;
-    height : 100px;
-    width : 200px;
-    bottom : 0px;
-    text-align: center;
-}
-#counter {
-    font-size: 3em;
-}
-#progress {
-    width : 500px;
-    position: absolute;
-    bottom : 0px;
-    right : 0px;
-    padding:5px;
-    text-align: right;
-}
-.prog {
-    width : 25px;
-    height : 25px;
-    border: 1px solid #000;
-    display: inline-block;
-    border-radius: 50%;
-    margin-left : 5px;
-    margin-right : 5px;
-}
-#scoreContainer {
-    margin : 20px auto;
-    background-color: white;
-    height: 300px;
-    width : 700px;
-    box-sizing: border-box;
-    border-radius: 5px;
-    box-shadow: 0px 5px 15px 0px;
-    position: relative;
-    display: none;
-    padding: 80px 2em;
-}
-#scoreContainer img {
-    display: block;
+    background-image: url("img/lt-bridge.png");
+    background-size: 20em;
+    background-repeat: no-repeat;
+    padding: 10em 2em 1em 2em; /* top, right, bottom, left */
+    border: 1px solid #333;
+    margin: 1em;
+    border-radius: 0.4em;
+    box-shadow: 0 4px 8px grey;
+    text-align:center;
+    max-width: 42em;
+    min-height: 18em;
     margin: auto;
 }
-#scoreContainer p {
-    display: block;
-    font-size: 1.5em;
-    font-weight: bold;
-    text-align: center;
+
+.start-quiz {
+    margin:auto;
 }
-</style>
-</head>
-<body>
-    <div id="container">
-        <div id="start">Start Quiz!</div>
-        <div id="quiz" style="display: none">
-            <div id="question"></div>
-            <div id="qImg"></div>
-            <div id="choices">
-                <div class="choice" id="A" onclick="checkAnswer('A')" style="margin-bottom: 30px;"></div>
-                <div class="choice" id="B" onclick="checkAnswer('B')" style="margin-bottom: 30px;"></div>
-                <div class="choice" id="C" onclick="checkAnswer('C')" style="margin-bottom: 30px;"></div>
-                <div class="choice" id="D" onclick="checkAnswer('D')" style="margin-bottom: 30px;"></div>
-            </div>
-            <div id="progress"></div>
-        </div>
-        <div id="scoreContainer" style="display: none"></div>
+.start-quiz td {
+    text-align:center;
+    vertical-align:middle;
+    font-size:180%;
+    font-weight:bold;
+    color:grey;
+    font-family:monospace;
+    border:2px solid grey;
+    width:4em;
+    height:4em;
+}
+.start-quiz td:hover {
+    border-color:#f39e4f;
+    color:#f39e4f;
+    cursor:pointer;
+}
+
+button {
+    min-width: 10em;
+    background-color: white;
+    margin: 0.5em;
+    padding:0.75em 1em;
+    border: 1px solid #444;
+    border-radius: 0.4em;
+}
+
+button:hover {
+    font-weight:bold;
+    border:2px solid grey;
+    cursor:pointer;
+}
+
+.progress-indicator{
+    text-align: end;
+    margin-top: 1em;
+}
+
+.indicator-lamp {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    border-radius: 1em;
+    border: 1px solid grey;
+    margin: 0.3em;
+}
+
+.correct {
+    background-color: #2e8b57;
+}
+
+.incorrect {
+    background-color: #ff6347;
+}
+    </style>
+    </head>
+  <body>
+    <div id="questions">
+      <div class="question">
+        <table class="start-quiz">
+        <tr><td onclick="nextQuestion()">Start quiz!</td></tr>
+        </table>
+      </div>
     </div>
-    <script>
-
-// select all elements
-const start = document.getElementById("start");
-const quiz = document.getElementById("quiz");
-const question = document.getElementById("question");
-const qImg = document.getElementById("qImg");
-const choiceA = document.getElementById("A");
-const choiceB = document.getElementById("B");
-const choiceC = document.getElementById("C");
-const choiceD = document.getElementById("D");
-const counter = document.getElementById("counter");
-const progress = document.getElementById("progress");
-const scoreDiv = document.getElementById("scoreContainer");
-
-// create our questions
-let questions = [
-    {
-        question : "Q3?",
-        imgSrc : "img/lt-bridge.png",
-        choiceA : "A)",
-        choiceB : "B)",
-        choiceC : "C)",
-        choiceD : "D)",
-        correct : "A"
-
-    }, {
-        question : "Q2?",
-        imgSrc : "img/lt-bridge.png",
-        choiceA : "A)",
-        choiceB : "B)",
-        choiceC : "C)",
-        choiceD : "D)",
-        correct : "B"
-    }, {
-        question : "Q3?",
-        imgSrc : "img/lt-bridge.png",
-        choiceA : "A)",
-        choiceB : "B)",
-        choiceC : "C)",
-        choiceD : "D)",
-        correct : "A"
-      }
-];
-
-// create some variables
-
-const lastQuestion = questions.length - 1;
-let runningQuestion = 0;
-let count = 0;
-let score = 0;
-
-// render a question
-function renderQuestion() {
-    let q = questions[runningQuestion];
-
-    question.innerHTML = "<p>"+ q.question +"</p>";
-    qImg.innerHTML = "<img src="+ q.imgSrc +">";
-    choiceA.innerHTML = q.choiceA;
-    choiceB.innerHTML = q.choiceB;
-    choiceC.innerHTML = q.choiceC;
-    choiceD.innerHTML = q.choiceD;
-}
-
-start.addEventListener("click",startQuiz);
-
-// start quiz
-function startQuiz() {
-    start.style.display = "none";
-    renderQuestion();
-    quiz.style.display = "block";
-    renderProgress();
-}
-
-// render progress
-function renderProgress() {
-    for(let qIndex = 0; qIndex <= lastQuestion; qIndex++) {
-        progress.innerHTML += "<div class='prog' id="+ qIndex +"></div>";
-    }
-}
-
-// checkAnwer
-function checkAnswer(answer) {
-    if( answer == questions[runningQuestion].correct) {
-        // answer is correct
-        score++;
-        // change progress color to green
-        answerIsCorrect();
-    }else {
-        // answer is wrong
-        // change progress color to red
-        answerIsWrong();
-    }
-    count = 0;
-    if(runningQuestion < lastQuestion) {
-        runningQuestion++;
-        renderQuestion();
-    }else {
-        scoreRender();
-    }
-}
-
-// answer is correct
-function answerIsCorrect() {
-    document.getElementById(runningQuestion).style.backgroundColor = "#2e8b57";
-}
-
-// answer is Wrong
-function answerIsWrong() {
-    document.getElementById(runningQuestion).style.backgroundColor = "#ff6347";
-}
-
-// score render
-function scoreRender() {
-    scoreDiv.style.display = "block";
-
-    // calculate the amount of question percent answered by the user
-    const scorePerCent = Math.round(100 * score/questions.length);
-
-    // choose the image based on the scorePerCent
-    let img = (scorePerCent >= 80) ? "img/5.png" :
-              (scorePerCent >= 60) ? "img/4.png" :
-              (scorePerCent >= 40) ? "img/3.png" :
-              (scorePerCent >= 20) ? "img/2.png" :
-              "img/1.png";
-
-    let finalText = (scorePerCent >= 80) ? "Well done, congratulations!" :
-                    (scorePerCent >= 60) ? "Good job!" :
-                    (scorePerCent >= 40) ? "Not bad." :
-                    (scorePerCent >= 20) ? "This could be better." :
-                    "Please, try again.";
-
-    scoreDiv.innerHTML = "<img src="+ img +">";
-    scoreDiv.innerHTML += "<p>"+ scorePerCent +"%</p>";
-    scoreDiv.innerHTML += "<p>"+ finalText +"</p>";
-    scoreDiv.addEventListener("click", restartQuiz);
-
+    <script type="application/javascript">
+function el(name, attr){
+    let element = document.createElement(name);
+    Object.keys(attr).forEach((attr_name) => {element.setAttribute(attr_name, attr[attr_name])});
+    return element;
 }
 
 function restartQuiz(event)
 {
     document.location.reload();
 }
+
+function renderQuestion(){
+    container.textContent = "";
+    let q = el("div", {"class":"question"});
+    if(questions.length === question_idx) {
+        let finalScore = computeScore();
+        let percent = String(finalScore*100) + "%";
+        let img_attr = {};
+        let p = el("p", {});
+        if (finalScore > 0.8){
+            img_attr["src"] = "img/5.png";
+            p.innerHTML = percent + "<br/> All <em>finished</em>!";
+        } else {
+            img_attr["src"] = "img/1.png";
+            p.innerHTML = percent + "<br/> Fake!";
+        }
+        let img = el("img", img_attr);
+        q.appendChild(img);
+        q.appendChild(p);
+        q.addEventListener("click", restartQuiz);
+    } else {
+        let question = questions[question_idx];
+        let p = el("p", {});
+        p.innerHTML = question.question;
+        q.appendChild(p);
+        question.options.forEach((option, index) => {
+            let btn = el("button", {"name": index});
+            btn.addEventListener("click", checkAnswer);
+            btn.textContent = option;
+            q.appendChild(btn);
+        });
+    }
+    q.appendChild(progressIndicator(progress));
+    container.appendChild(q);
+}
+
+function progressIndicator(){
+    let indicator = el("div", {"class":"progress-indicator"});
+    questions.forEach((question, index) => {
+        let circle = el("div", {"class":"indicator-lamp"});
+        if(progress[index]===true){circle.classList.add("correct");}
+        else if(progress[index]===false){circle.classList.add("incorrect");}
+        indicator.appendChild(circle);
+    });
+    return indicator;
+}
+
+function computeScore(){
+    let score = 0;
+    progress.forEach((isCorrect) => {
+        if (isCorrect) {score += 1;}
+    });
+    score = score/progress.length;
+    return score;
+}
+
+function checkAnswer(event){
+    let btn = event.target;
+    let correct = String(questions[question_idx].correct_answer);
+    let answer = btn.name;
+    if (answer === correct) {
+        progress[question_idx] = true;
+    } else {
+        progress[question_idx] = false;
+    }
+    nextQuestion();
+}
+
+function nextQuestion()
+{
+    if (question_idx === null) {
+        question_idx = 0;
+    } else {
+        question_idx += 1;
+    }
+    renderQuestion();
+}
+
     </script>
-</body>
+    <script type="application/javascript">
+    let question_idx = null;
+    let progress = [];
+    const questions = [
+    {"question": "What is this about?", "options":["t1", "t2", "t3", "t4"], "correct_answer": 2},
+    {"question": "What is the meaning of life?", "options":["t1", "t2", "t3", "t4"], "correct_answer": 2}
+    ];
+    const container = document.querySelector("#questions");
+    </script>
+  </body>
 </html>
