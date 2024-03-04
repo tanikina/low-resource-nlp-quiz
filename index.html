@@ -4,83 +4,98 @@
     <meta charset="utf-8"/>
     <title>Quiz Time!</title>
     <style>
-body {
-    background:#fad2ad;
-    color:black;
-    font-family:sans-serif;
-}
-.question {
-    background-color: white;
-    background-image: url("img/lt-bridge.png");
-    background-size: 20em;
-    background-repeat: no-repeat;
-    padding: 10em 2em 1em 2em; /* top, right, bottom, left */
-    border: 1px solid #333;
-    margin: 1em;
-    border-radius: 0.4em;
-    box-shadow: 0 4px 8px grey;
-    text-align:center;
-    max-width: 42em;
-    min-height: 18em;
-    margin: auto;
-}
+	body {
+		background:#fad2ad;
+		color:black;
+		font-family:sans-serif;
+	}
 
-.start-quiz {
-    margin:auto;
-}
-.start-quiz td {
-    text-align:center;
-    vertical-align:middle;
-    font-size:180%;
-    font-weight:bold;
-    color:grey;
-    font-family:monospace;
-    border:2px solid grey;
-    width:4em;
-    height:4em;
-}
-.start-quiz td:hover {
-    border-color:#f39e4f;
-    color:#f39e4f;
-    cursor:pointer;
-}
+	.start-quiz {
+		margin:auto;
+	}
+	.start-quiz td {
+		text-align:center;
+		vertical-align:middle;
+		font-size:180%;
+		font-weight:bold;
+		color:grey;
+		font-family:monospace;
+		border:2px solid grey;
+		width:4em;
+		height:4em;
+	}
+	.start-quiz td:hover {
+		border-color:#f39e4f;
+		color:#f39e4f;
+		cursor:pointer;
+	}
 
-button {
-    min-width: 10em;
-    background-color: white;
-    margin: 0.5em;
-    padding:0.75em 1em;
-    border: 1px solid #444;
-    border-radius: 0.4em;
-}
+	.question {
+		position: relative;
+		background-color: white;
+		background-image: url("img/lt-bridge.png");
+		background-size: 20em;
+		background-repeat: no-repeat;
+		padding: 10em 2em 10em 2em; /* top, right, bottom, left */
+		border: 1px solid #333;
+		margin: 1em;
+		border-radius: 0.4em;
+		box-shadow: 0 4px 8px grey;
+		text-align:center;
+		max-width: 42em;
+		/*min-height: 18em;*/
+		margin: auto;
+	}
 
-button:hover {
-    font-weight:bold;
-    border:2px solid grey;
-    cursor:pointer;
-}
+	p {
+	    text-align:left;
+	}
 
-.progress-indicator{
-    text-align: end;
-    margin-top: 1em;
-}
+	.final-message{
+	    text-align:center;
+	}
 
-.indicator-lamp {
-    display: inline-block;
-    width: 2em;
-    height: 2em;
-    border-radius: 1em;
-    border: 1px solid grey;
-    margin: 0.3em;
-}
+	button {
+		min-width: 10em;
+		background-color: white;
+		color: gray;
+		margin: 0.5em;
+		padding:0.75em 1em;
+		border: 1px solid #444;
+		border-radius: 0.4em;
+		font-weight:bold;
+		box-sizing:border-box;
+	}
 
-.correct {
-    background-color: #2e8b57;
-}
+	button:hover {
+	    color: black;
+		border-color: black;
+		box-shadow:0 0 1px black;
+		cursor:pointer;
+	}
 
-.incorrect {
-    background-color: #ff6347;
-}
+	.progress-indicator{
+		text-align: end;
+		position: absolute;
+		bottom: 1em;
+	}
+
+	.indicator-lamp {
+		display: inline-block;
+		width: 2em;
+		height: 2em;
+		border-radius: 1em;
+		border: 1px solid grey;
+		margin: 0.3em;
+	}
+
+	.correct {
+		background-color: #2e8b57;
+	}
+
+	.incorrect {
+		background-color: #ff6347;
+	}
     </style>
     </head>
   <body>
@@ -92,101 +107,123 @@ button:hover {
       </div>
     </div>
     <script type="application/javascript">
-function el(name, attr){
-    let element = document.createElement(name);
-    Object.keys(attr).forEach((attr_name) => {element.setAttribute(attr_name, attr[attr_name])});
-    return element;
-}
+	"use strict";
+	function el(name, attr){
+		let element = document.createElement(name);
+		Object.keys(attr).forEach((attr_name) => {element.setAttribute(attr_name, attr[attr_name])});
+		return element;
+	}
 
-function restartQuiz(event)
-{
-    document.location.reload();
-}
+	function restartQuiz(event)
+	{
+		document.location.reload();
+	}
 
-function renderQuestion(){
-    container.textContent = "";
-    let q = el("div", {"class":"question"});
-    if(questions.length === question_idx) {
-        let finalScore = computeScore();
-        let percent = String(finalScore*100) + "%";
-        let img_attr = {};
-        let p = el("p", {});
-        if (finalScore > 0.8){
-            img_attr["src"] = "img/5.png";
-            p.innerHTML = percent + "<br/> All <em>finished</em>!";
-        } else {
-            img_attr["src"] = "img/1.png";
-            p.innerHTML = percent + "<br/> Fake!";
-        }
-        let img = el("img", img_attr);
-        q.appendChild(img);
-        q.appendChild(p);
-        q.addEventListener("click", restartQuiz);
-    } else {
-        let question = questions[question_idx];
-        let p = el("p", {});
-        p.innerHTML = question.question;
-        q.appendChild(p);
-        question.options.forEach((option, index) => {
-            let btn = el("button", {"name": index});
-            btn.addEventListener("click", checkAnswer);
-            btn.textContent = option;
-            q.appendChild(btn);
-        });
-    }
-    q.appendChild(progressIndicator(progress));
-    container.appendChild(q);
-}
+	function renderQuestion(){
+		container.textContent = "";
+		let q = el("div", {"class":"question"});
+		if(questions.length === question_idx) {
+		    let finalScore = computeScore();
+		    let percent = (finalScore*100).toFixed(2) + "%";
+		    let img_attr = {"width":59,"height":59};
+		    let p = el("p", {"class":"final-message"});
+		    if (finalScore >= 0.8){
+		        img_attr["src"] = "img/5.png";
+		        p.innerHTML = percent + "<br/><b>Well done, congratulations!</b>";
+		    } else if (finalScore >= 0.65) {
+		        img_attr["src"] = "img/4.png";
+		        p.innerHTML = percent + "<br/><b>Good job!</b>";
+		    } else if (finalScore >= 0.5) {
+		        img_attr["src"] = "img/3.png";
+		        p.innerHTML = percent + "<br/><b>Not bad but you could improve!</b>";
+		    } else if (finalScore >= 0.2) {
+		        img_attr["src"] = "img/2.png";
+		        p.innerHTML = percent + "<br/><b>This could be better.</b>";
+		    } else {
+		        img_attr["src"] = "img/1.png";
+		        p.innerHTML = percent + "<br/><b>Please, try again later!</b>";
+		    }
+		    let img = el("img", img_attr);
+		    q.appendChild(img);
+		    q.appendChild(p);
+		    q.addEventListener("click", restartQuiz);
+		} else {
+		    let question = questions[question_idx];
+		    let p = el("p", {});
+		    p.innerHTML = question.question;
+		    q.appendChild(p);
+		    question.options.forEach((option, index) => {
+		        let btn = el("button", {"name": index});
+		        btn.addEventListener("click", checkAnswer);
+		        btn.textContent = option;
+		        q.appendChild(btn);
+		    });
+		}
+		q.appendChild(progressIndicator(progress));
+		container.appendChild(q);
+	}
 
-function progressIndicator(){
-    let indicator = el("div", {"class":"progress-indicator"});
-    questions.forEach((question, index) => {
-        let circle = el("div", {"class":"indicator-lamp"});
-        if(progress[index]===true){circle.classList.add("correct");}
-        else if(progress[index]===false){circle.classList.add("incorrect");}
-        indicator.appendChild(circle);
-    });
-    return indicator;
-}
+	function progressIndicator(){
+		let indicator = el("div", {"class":"progress-indicator"});
+		questions.forEach((question, index) => {
+		    let circle = el("div", {"class":"indicator-lamp"});
+		    if(progress[index]===true){circle.classList.add("correct");}
+		    else if(progress[index]===false){circle.classList.add("incorrect");}
+		    indicator.appendChild(circle);
+		});
+		return indicator;
+	}
 
-function computeScore(){
-    let score = 0;
-    progress.forEach((isCorrect) => {
-        if (isCorrect) {score += 1;}
-    });
-    score = score/progress.length;
-    return score;
-}
+	function computeScore(){
+		let score = 0;
+		progress.forEach((isCorrect) => {
+		    if (isCorrect) {score += 1;}
+		});
+		score = score/progress.length;
+		return score;
+	}
 
-function checkAnswer(event){
-    let btn = event.target;
-    let correct = String(questions[question_idx].correct_answer);
-    let answer = btn.name;
-    if (answer === correct) {
-        progress[question_idx] = true;
-    } else {
-        progress[question_idx] = false;
-    }
-    nextQuestion();
-}
+	function checkAnswer(event){
+		let btn = event.target;
+		let correct = String(questions[question_idx].correct_answer);
+		let answer = btn.name;
+		if (answer === correct) {
+		    progress[question_idx] = true;
+		} else {
+		    progress[question_idx] = false;
+		}
+		nextQuestion();
+	}
 
-function nextQuestion()
-{
-    if (question_idx === null) {
-        question_idx = 0;
-    } else {
-        question_idx += 1;
-    }
-    renderQuestion();
-}
-
+	function nextQuestion()
+	{
+		if (question_idx === null) {
+		    question_idx = 0;
+		} else {
+		    question_idx += 1;
+		}
+		renderQuestion();
+	}
     </script>
     <script type="application/javascript">
     let question_idx = null;
     let progress = [];
     const questions = [
-    {"question": "What is this about?", "options":["t1", "t2", "t3", "t4"], "correct_answer": 2},
-    {"question": "What is the meaning of life?", "options":["t1", "t2", "t3", "t4"], "correct_answer": 2}
+    {"question": "Model efficiency is related to:", "options":["having less data", "faster training", "efficient sampling", "task coverage"], "correct_answer": 1},
+    {"question": "Entropy-based selection is often used in context of:", "options":["pre-filtering data", "data augmentation", "active learning", "de-duplication"], "correct_answer": 2},
+    {"question": "The idea behind the curriculum learning is to start with:", "options":["easy samples", "similar samples", "mixed samples", "disparate samples"], "correct_answer": 0},
+    {"question": "Transfer learning is often used for low-resource domain and language adaptation and it can be characterized in terms of:", "options":["data and model efficiency", "data efficiency", "model efficiency", "language coverage"], "correct_answer": 0},
+    {"question": "What can be described as a smart objective for faster pre-training of LLMs?", "options":["Character Masking", "Single-word Masking", "Multi-word Masking", "Next Sentence Prediction"], "correct_answer": 2},
+    {"question": "The \"simplest\" version of the adapter is called:", "options":["Bottleneck", "LoRA", "P-Tuning", "Compacter"], "correct_answer": 0},
+    {"question": "The difference between the prompt tuning and prefix tuning is that prefix tuning:", "options":["tunes on the Input Level", "tunes only the first token", "tunes multiple tokens", "tunes on intermediate levels"], "correct_answer": 3},
+    {"question": "LoRA allows to train the weight matrices:", "options":["sequentially", "in parallel", "interchangeably", "using stack"], "correct_answer": 1},
+    {"question": "Combining the representations from different task adapters in a single model is called:", "options":["adapter transfer", "adapter parallelism", "adapter fusion", "adapter quantization"], "correct_answer": 2},
+    {"question": "The difference between Mistral and Mistral-GPTQ is related to:", "options":["efficient weight encoding", "faster training", "using adapters", "active learning"], "correct_answer": 0},
+    {"question": "RAG is a semi-parametric model efficiency method that stands for:", "options":["Randomized Augmented Generation", "Regressive Auto Generation", "Refactored Analogy Generation", "Retrieval Augmented Generation"], "correct_answer": 3},
+    {"question": "Soft prompts correspond to:", "options":["shared matrices", "trainable embeddings", "input embeddings", "adapter weights"], "correct_answer": 1},
+    {"question": "In order to load pre-trained adapter weights with <i>adapters</i> library you need to write the following:", "options":["load_adapter(adapter_name)", "add_adapter(adapter_name)", "update_adapter(adapter_name)", "inject_adapter(adapter_name)"], "correct_answer": 0},
+    {"question": "Language and task adapters can be:", "options":["merged", "stacked", "expanded", "reversed"], "correct_answer": 1},
+    {"question": "Prompt tuning can be done with:", "options":["only frozen LLM", "only tunable LLM", "partially frozen LLM", "both frozen and tunable LLM"], "correct_answer": 3},
     ];
     const container = document.querySelector("#questions");
     </script>
